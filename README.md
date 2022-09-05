@@ -4,6 +4,10 @@ A Java Virtual Machine written entirely in JavaScript allowing Java bytecode to 
 ## Why
 Browsers used to come equipped with JVM's back when Java Applets were a thing, but now that is a thing of the past. Now there are many resources out there to let you transpile your Java code to JavaScript allowing you to run your Java program in a JavaScript environment such as a browser. But that wasn't good enough for me because I didn't want to lose any of the behaviors of Java. I needed the Java to be executed with the same rules as if it were being run natively. I searched for an already existing solution and the two things I found were: https://github.com/Jivings/jsJVM and https://github.com/plasma-umass/doppio. jsJVM hadn't been updated in 10 years meaning that it is extremely outdated and doesn't use any of the modern JavaScript features which would allow improved perfomrance. Not only that, but all its links led to websites that don't exist anymore; leaving with me no documentation about how to even use it. Doppio is less outdated than jsJVM and runs Java 8, but still is quite old compared to the latest stable version of Java is version 17. But the bigger issue for me was that it's not so much just a JVM, rather it is more like an entire OS simulator written in JS and as a result using it requires downloading 40 MB (not exactly lightweight) of source code every time you want to use it. So I decided to try and create my own JVM in JS with the goal of it being as lightweight, fast, and easy to use as possible. Plus I really just thought it would be a cool project to create my own JVM.
 
+## Demo
+Here is an online Java editor that uses JavaVM.js to execute Java code in a web browser
+https://academy.vexcess.repl.co/computer-programming/new/java
+
 ## Usage
 1) Import the JavaVM.js script (https://cdn.jsdelivr.net/gh/vExcess/JavaVM.js/JavaVM.js)
 2) Follow the code below:

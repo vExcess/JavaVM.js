@@ -37,7 +37,7 @@ Since my goal is for this to be a lightweight and fast as possible, once I get a
 I just started this project very recently so there is still a lot to come.
 Currently it has very limited support for Java. 
 Less than 20% of Java's opcodes are supported.
-And there is next to no support for standard Java libraries.
+And there is next to no support for standard Java libraries. The only primitive data type that has half-decent support is `int`. The JVM is likely to act in unexpected ways and run in infinite loops.
 
 ## Contribute
 There is bound to be a gazillion bugs in with my JVM.

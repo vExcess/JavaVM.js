@@ -19,15 +19,18 @@ And there is next to no support for standard Java libraries. The only primitive 
 2) Follow the code below:
 ```javascript
 // create a new JVM
-var myJVM = createJVM();
+var myJVM = new JavaVM.VM();
+
+myJVM.debugMode = true; // println's every JVM operation
 
 // attach any native handlers you would like. These allow input/output from JavaScript
-// the println handler should expect (String value)
-myJVM.attachHandler("println", println);
+myJVM.attachMethod("println", println);
+
 // the debug handler should expect (String value, String scope)
-myJVM.attachHandler("debug", debug);
+myJVM.attachMethod("debug", debug);
+
 // the throwError handler should expect (String value, String scope, String code)
-myJVM.attachHandler("throwError", throwError);
+myJVM.attachMethod("throwError", throwError);
 
 // load a string of bytecode into the JVM. The bytecode should be in the format returned by calling `javap -c -p -v Example.class`
 myJVM.loadByteCode(bytecode);

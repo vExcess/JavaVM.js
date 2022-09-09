@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<!--
+
+    A Java Virtual Machine written in JavaScript
+
+    You can now run Java Code in a web browser!
+
+    There is one other JVM written in JS 11 years ago, but it seems to be outdated and unmaintained and I couldn't find any documentation on how to use it
+
+    Once I have this one working in JS I will work on using WASM to enhance performance.
+
+    Currently this has support for 22% (45/206) of all Java's operations
+
+    Also this is guarenteed to be extremely buggy. As such this is not ready for production use and please let me know of any bugs if you come across any.
+
+-->
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>JVM.js</title>
+
+    <!-- CONSOLE STYLE -->
+    <style>
+        #console {
+            font-family: Consolas, monospace;
+            font-size: 16px;
+            width: 99%;
+            height: 400px;
+            border: 1px solid black;
+            overflow: auto;
+            font-size: 14px;
+        }
+
+        .log-item {
+            padding: 5px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+    <script src="./bytecodeCompiler.js"></script>
+    <script src="./VM.js"></script>
+
+</head>
+<body>
+
+    <!-- Console -->
+    <div id="console"></div>
+
+    <script id="doubleTest" type="text/bytecode">
+Classfile /home/runner/Java-Replit/Main.class
+Last modified Aug 26, 2022; size 332 bytes
+MD5 checksum 109cea59091966923d67390d8efcc903
+Compiled from "Main.java"
+class Main
+minor version: 0
+major version: 55
+flags: (0x0020) ACC_SUPER
+this_class: #3                          // Main
+super_class: #4                         // java/lang/Object
+interfaces: 0, fields: 0, methods: 3, attributes: 1
+Constant pool:
+    #1 = Methodref          #4.#15         // java/lang/Object."<init>":()V
+    #2 = Methodref          #3.#16         // Main.add2:(II)I
+    #3 = Class              #17            // Main
+    #4 = Class              #18            // java/lang/Object
+    #5 = Utf8               <init>
+    #6 = Utf8               ()V
+    #7 = Utf8               Code
+    #8 = Utf8               LineNumberTable
+    #9 = Utf8               add2
+#10 = Utf8               (II)I
+#11 = Utf8               main
+#12 = Utf8               ([Ljava/lang/String;)V
+#13 = Utf8               SourceFile
+#14 = Utf8               Main.java
+#15 = NameAndType        #5:#6          // "<init>":()V
+#16 = NameAndType        #9:#10         // add2:(II)I
+#17 = Utf8               Main
+#18 = Utf8               java/lang/Object
+{
+Main();
+    descriptor: ()V
+    flags: (0x0000)
+    Code:
+    stack=1, locals=1, args_size=1
+        0: aload_0
+        1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+        4: return
+    LineNumberTable:
+        line 3: 0
+
+public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: (0x0009) ACC_PUBLIC, ACC_STATIC
+    Code:
+    stack=4, locals=3, args_size=1
+        0: dconst_0
+        1: dstore_1
+        2: dload_1
+        3: ldc2_2 #2
+        // double 100.0d
+        6: dcmpg
+        7: ifge
+        10: dload_1
+        11: dconst_1
+        12: dadd
+        13: dstore_1
+        14: goto 2
+        17: return
+    LineNumberTable:
+        line 9: 0
+        line 10: 8
+}
+    </script>
+
+    <script id="bytecode" type="text/bytecode">
+        Classfile /home/runner/Java-Compiler/Main.class
+        Last modified Sep 5, 2022; size 444 bytes
+        SHA-256 checksum 7a640f309b0b5096e4db7160f3de3db42cf83f93759d0ca9ef2bdbdf632352d2
+        Compiled from ".java"
+      class Main
+        minor version: 0
+        major version: 61
+        flags: (0x0020) ACC_SUPER
+        this_class: #8                          // Main
+        super_class: #2                         // java/lang/Object
+        interfaces: 0, fields: 0, methods: 3, attributes: 1
+      Constant pool:
+         #1 = Methodref          #2.#3          // java/lang/Object."<init>":()V
+         #2 = Class              #4             // java/lang/Object
+         #3 = NameAndType        #5:#6          // "<init>":()V
+         #4 = Utf8               java/lang/Object
+         #5 = Utf8               <init>
+         #6 = Utf8               ()V
+         #7 = Methodref          #8.#9          // Main.add2:(II)I
+         #8 = Class              #10            // Main
+         #9 = NameAndType        #11:#12        // add2:(II)I
+        #10 = Utf8               Main
+        #11 = Utf8               add2
+        #12 = Utf8               (II)I
+        #13 = Fieldref           #14.#15        // java/lang/System.out:Ljava/io/PrintStream;
+        #14 = Class              #16            // java/lang/System
+        #15 = NameAndType        #17:#18        // out:Ljava/io/PrintStream;
+        #16 = Utf8               java/lang/System
+        #17 = Utf8               out
+        #18 = Utf8               Ljava/io/PrintStream;
+        #19 = Methodref          #20.#21        // java/io/PrintStream.println:()V
+        #20 = Class              #22            // java/io/PrintStream
+        #21 = NameAndType        #23:#6         // println:()V
+        #22 = Utf8               java/io/PrintStream
+        #23 = Utf8               println
+        #24 = Utf8               Code
+        #25 = Utf8               LineNumberTable
+        #26 = Utf8               main
+        #27 = Utf8               ([Ljava/lang/String;)V
+        #28 = Utf8               SourceFile
+        #29 = Utf8               .java
+      {
+        Main();
+          descriptor: ()V
+          flags: (0x0000)
+          Code:
+            stack=1, locals=1, args_size=1
+               0: aload_0
+               1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+               4: return
+            LineNumberTable:
+              line 1: 0
+      
+        public static int add2(int, int);
+          descriptor: (II)I
+          flags: (0x0009) ACC_PUBLIC, ACC_STATIC
+          Code:
+            stack=2, locals=2, args_size=2
+               0: iload_0
+               1: iload_1
+               2: iadd
+               3: ireturn
+            LineNumberTable:
+              line 3: 0
+      
+        public static void main(java.lang.String[]);
+          descriptor: ([Ljava/lang/String;)V
+          flags: (0x0009) ACC_PUBLIC, ACC_STATIC
+          Code:
+            stack=2, locals=1, args_size=1
+               0: iconst_1
+               1: bipush        12
+               3: invokestatic  #7                  // Method add2:(II)I
+               6: pop
+               7: getstatic     #13                 // Field java/lang/System.out:Ljava/io/PrintStream;
+              10: invokevirtual #19                 // Method java/io/PrintStream.println:()V
+              13: return
+            LineNumberTable:
+              line 7: 0
+              line 8: 7
+              line 9: 13
+      }
+      SourceFile: ".java"
+    </script>
+
+    <script id="factorial" type="text/bytecode">
+        Classfile /home/runner/Java-Compiler/Main.class
+        Last modified Sep 8, 2022; size 513 bytes
+        SHA-256 checksum 1d45d43926ced1b9102fcd225d72c9d10c21c806c7b9e0783aa6f6549f8ba382
+        Compiled from ".java"
+      class Main
+        minor version: 0
+        major version: 61
+        flags: (0x0020) ACC_SUPER
+        this_class: #14                         // Main
+        super_class: #2                         // java/lang/Object
+        interfaces: 0, fields: 0, methods: 3, attributes: 1
+      Constant pool:
+         #1 = Methodref          #2.#3          // java/lang/Object."<init>":()V
+         #2 = Class              #4             // java/lang/Object
+         #3 = NameAndType        #5:#6          // "<init>":()V
+         #4 = Utf8               java/lang/Object
+         #5 = Utf8               <init>
+         #6 = Utf8               ()V
+         #7 = Fieldref           #8.#9          // java/lang/System.out:Ljava/io/PrintStream;
+         #8 = Class              #10            // java/lang/System
+         #9 = NameAndType        #11:#12        // out:Ljava/io/PrintStream;
+        #10 = Utf8               java/lang/System
+        #11 = Utf8               out
+        #12 = Utf8               Ljava/io/PrintStream;
+        #13 = Methodref          #14.#15        // Main.factorial:(I)I
+        #14 = Class              #16            // Main
+        #15 = NameAndType        #17:#18        // factorial:(I)I
+        #16 = Utf8               Main
+        #17 = Utf8               factorial
+        #18 = Utf8               (I)I
+        #19 = Methodref          #20.#21        // java/io/PrintStream.println:(I)V
+        #20 = Class              #22            // java/io/PrintStream
+        #21 = NameAndType        #23:#24        // println:(I)V
+        #22 = Utf8               java/io/PrintStream
+        #23 = Utf8               println
+        #24 = Utf8               (I)V
+        #25 = Utf8               Code
+        #26 = Utf8               LineNumberTable
+        #27 = Utf8               StackMapTable
+        #28 = Utf8               main
+        #29 = Utf8               ([Ljava/lang/String;)V
+        #30 = Utf8               SourceFile
+        #31 = Utf8               .java
+      {
+        Main();
+          descriptor: ()V
+          flags: (0x0000)
+          Code:
+            stack=1, locals=1, args_size=1
+               0: aload_0
+               1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+               4: return
+            LineNumberTable:
+              line 1: 0
+      
+        public static int factorial(int);
+          descriptor: (I)I
+          flags: (0x0009) ACC_PUBLIC, ACC_STATIC
+          Code:
+            stack=3, locals=3, args_size=1
+               0: iconst_5
+               1: istore_2
+               2: iconst_1
+               3: istore_1
+               4: iload_1
+               5: iload_2
+               6: iconst_1
+               7: iadd
+               8: if_icmpge     21
+              11: iload_0
+              12: iload_1
+              13: imul
+              14: istore_0
+              15: iinc          1, 1
+              18: goto          4
+              21: iload_0
+              22: ireturn
+            LineNumberTable:
+              line 4: 0
+              line 5: 2
+              line 6: 11
+              line 5: 15
+              line 8: 21
+            StackMapTable: number_of_entries = 2
+              frame_type = 253 /* append */
+                offset_delta = 4
+                locals = [ int, int ]
+              frame_type = 16 /* same */
+      
+        public static void main(java.lang.String[]);
+          descriptor: ([Ljava/lang/String;)V
+          flags: (0x0009) ACC_PUBLIC, ACC_STATIC
+          Code:
+            stack=2, locals=1, args_size=1
+               0: getstatic     #7                  // Field java/lang/System.out:Ljava/io/PrintStream;
+               3: iconst_1
+               4: invokestatic  #13                 // Method factorial:(I)I
+               7: invokevirtual #19                 // Method java/io/PrintStream.println:(I)V
+              10: return
+            LineNumberTable:
+              line 12: 0
+              line 13: 10
+      }
+      SourceFile: ".java"
+    </script>
+    
+    <script type>
+// get the console element
+var consoleEl = document.getElementById("console");
+
+// console functions
+function println(val) {
+    var el = document.createElement("div");
+    el.style.whiteSpace = "pre";
+    el.className = "log-item";
+    el.innerText = val;
+
+    consoleEl.appendChild(el);
+}
+
+function debug(val, scope) {
+    var el = document.createElement("div");
+    el.className = "log-item";
+    el.style.backgroundColor = "rgb(255, 251, 229)";
+    el.style.color = "rgb(92, 60, 0)";
+    el.style.whiteSpace = "pre";
+    el.innerText = val;
+
+    if (scope) {
+        var locEl = document.createElement("span");
+        locEl.style.color = "rgb(0, 105, 185)";
+        locEl.innerText = "\n@" + scope;
+        el.appendChild(locEl);
+    }
+
+    consoleEl.appendChild(el);
+}
+
+function throwError(val, scope, code) {
+    var el = document.createElement("div");
+    el.className = "log-item";
+    el.style.backgroundColor = "rgb(255, 240, 240)";
+    el.style.color = "rgb(196, 43, 28)";
+    el.style.whiteSpace = "pre";
+    el.innerText = val;
+
+    if (scope) {
+        var locEl = document.createElement("span");
+        locEl.style.color = "rgb(0, 105, 185)";
+        locEl.innerText = "\n@" + code + ";\n@" + scope;
+        el.appendChild(locEl);
+    }
+
+    consoleEl.appendChild(el);
+}
+
+// get the bytecode we gonna run
+var bytecode = document.getElementById("bytecode").innerHTML;
+
+// display bytecode we are gonna run on the webpage
+var el = document.createElement("pre");
+el.innerHTML = bytecode.trim();
+el.style.height = "400px";
+el.style.overflow = "auto";
+document.body.prepend(el);
+
+
+// run the code in the JVM
+var myJVM = new JavaVM.VM();
+myJVM.debugMode = true; // println's every JVM operations
+myJVM.attachMethod("println", println);
+myJVM.attachMethod("debug", debug);
+myJVM.attachMethod("throwError", throwError);
+myJVM.loadByteCode(bytecode);
+myJVM.init();
+
+
+    </script>
+    
+    <script></script>
+
+</body>
+</html>
